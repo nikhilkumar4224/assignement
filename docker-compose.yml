@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+
+  service_1:
+    build: ./Service1
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./service1/:/app/
+    ports:
+      - 8001:8000
+
+  service_2:
+    build: ./Service2
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./service2/:/app/
+    ports:
+      - 8002:8000
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - service_1
+      - service_2
